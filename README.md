@@ -30,7 +30,7 @@ Ensure you have the necessary Python packages installed:
 pip install requests gitpython
 
 
-## Usage
+## **Usage**
 
 1. Clone this repository to your local machine.
 
