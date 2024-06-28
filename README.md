@@ -29,15 +29,14 @@ Ensure you have the necessary Python packages installed:
 ```sh
 pip install requests gitpython
 
-
-## **Usage**
+## USAGE
 
 1. Clone this repository to your local machine.
 
 ```sh
 git clone https://github.com/yourusername/yourrepository.git
 cd yourrepository
-```
+
 
 2. Run the Python script with sufficient privileges to write to `/usr/local/bin`.
 
