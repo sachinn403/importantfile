@@ -29,8 +29,35 @@ Ensure you have the necessary Python packages installed:
 ```sh
 pip install requests gitpython
 
-## USAGE
 
+## Usage
 
+1. Clone this repository to your local machine.
+
+```sh
+git clone https://github.com/yourusername/yourrepository.git
+cd yourrepository
+```
+
+2. Run the Python script with sufficient privileges to write to `/usr/local/bin`.
+
+```sh
+sudo python3 download_tools.py
+```
+
+The script will:
+
+1. Clone each GitHub repository into the specified `bin_dir`.
+2. Make all `.sh` and `.py` files within those repositories executable.
+3. Create symlinks for those executable files in the `bin_dir`, allowing you to run them by their names.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Thanks to the authors of the various tools included in this script.
+- Inspired by the need to streamline the setup of essential security tools on Kali Linux.
 
 
