@@ -1,4 +1,3 @@
-# ImportantFile
 # Kali Linux Tools Downloader
 
 This repository contains a Python script to download various security tools from GitHub and set them up in your Kali Linux environment. The script clones the specified repositories, makes the scripts executable, and creates symlinks in the `/usr/local/bin` directory, allowing you to run the tools directly from the command line.
@@ -30,33 +29,8 @@ Ensure you have the necessary Python packages installed:
 ```sh
 pip install requests gitpython
 
-
-##Usage
-Clone this repository to your local machine.
+## USAGE
 
 
-git clone https://github.com/yourusername/yourrepository.git
-cd yourrepository
-
-Run the Python script with sufficient privileges to write to /usr/local/bin.
-
-
-sudo python3 download_tools.py
-The script will:
-
-Clone each GitHub repository into the specified bin_dir.
-Make all .sh and .py files within those repositories executable.
-Create symlinks for those executable files in the bin_dir, allowing you to run them by their names.
-
-##License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-##Acknowledgments
-Thanks to the authors of the various tools included in this script.
-Inspired by the need to streamline the setup of essential security tools on Kali Linux.
-less
-Copy code
-
-Replace `https://github.com/yourusername/yourrepository.git` with the actual URL of your repository.
 
 
