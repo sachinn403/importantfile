@@ -24,6 +24,16 @@ repos = [
 # Path to the bin directory
 bin_dir = "/usr/bin"
 
+# Function to display a banner
+def display_banner():
+    banner = """
+    =============================================
+    |        GitHub Repository Installer        |
+    |     Cloning, Installing, and Linking      |
+    =============================================
+    """
+    print(banner)
+
 # Function to run shell commands
 def run_command(command):
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -55,6 +65,9 @@ def create_symlink(binary_path, binary_name):
         print(f"Created symlink for {binary_path} -> {symlink_path}")
     else:
         print(f"Symlink for {binary_name} already exists. Skipping...")
+
+# Display the banner
+display_banner()
 
 # Process each repository
 for repo in repos:
