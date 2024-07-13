@@ -9,9 +9,9 @@ print("""
 ______          _     _ _ _ 
 |  _  |        | |   (_) | |
 | | | |__ _ __ | |__  _| | |
-| | | / _` | '_ \| '_ \| | | |
+| | | / _` | '_ \\| '_ \\| | | |
 | |/ / (_| | |_) | |_) | | | |
-\___/ \__,_|.__/|_.__/|_|_|
+\\___/ \\__,_|.__/|_.__/|_|_|
           | |              
           |_|              
 
@@ -21,20 +21,20 @@ ______          _     _ _ _
 
 # Define the list of repositories to clone and install
 repos = [
-    {"url": "https://github.com/SecureAuthCorp/impacket.git", "install_cmd": "pip install.", "binary_name": "impacket.py"},
-    {"url": "https://github.com/danielmiessler/SecLists.git", "install_cmd": "pip install.", "binary_name": "SecLists.py"},
-    {"url": "https://github.com/carlospolop/PEASS-ng.git", "install_cmd": "pip install.", "binary_name": "peass-ng.py"},
-    {"url": "https://github.com/danielbohannon/Invoke-Obfuscation.git", "install_cmd": "pip install.", "binary_name": "Invoke-Obfuscation.py"},
+    {"url": "https://github.com/SecureAuthCorp/impacket.git", "install_cmd": "pip install .", "binary_name": "impacket"},
+    {"url": "https://github.com/danielmiessler/SecLists.git", "install_cmd": "pip install .", "binary_name": "SecLists"},
+    {"url": "https://github.com/carlospolop/PEASS-ng.git", "install_cmd": "pip install .", "binary_name": "PEASS-ng"},
+    {"url": "https://github.com/danielbohannon/Invoke-Obfuscation.git", "install_cmd": "pip install .", "binary_name": "Invoke-Obfuscation"},
     {"url": "https://github.com/rebootuser/LinEnum.git", "install_cmd": "chmod +x LinEnum.sh", "binary_name": "LinEnum.sh"},
-    {"url": "https://github.com/21y4d/nmapAutomator.git", "install_cmd": "pip install.", "binary_name": "nmapAutomator.py"},
+    {"url": "https://github.com/21y4d/nmapAutomator.git", "install_cmd": "pip install .", "binary_name": "nmapAutomator"},
     {"url": "https://github.com/RustScan/RustScan.git", "install_cmd": "cargo build --release", "binary_name": "RustScan"},
-    {"url": "https://github.com/EmpireProject/Empire.git", "install_cmd": "pip install.", "binary_name": "Empire.py"},
-    {"url": "https://github.com/PowerShellMafia/PowerSploit.git", "install_cmd": "powershell -Command \"Import-Module.\\PowerSploit.ps1\"", "binary_name": "PowerSploit.ps1"},
-    {"url": "https://github.com/ethicalhackingplayground/katana.git", "install_cmd": "pip install.", "binary_name": "katana"},
-    {"url": "https://github.com/thewhiteh4t/FinalRecon.git", "install_cmd": "pip install.", "binary_name": "FinalRecon.py"},
-    {"url": "https://github.com/bhavsec/reconspider.git", "install_cmd": "pip install.", "binary_name": "reconspider.py"},
-    {"url": "https://github.com/411Hall/JAWS.git", "install_cmd": "pip install.", "binary_name": "JAWS.py"},
-    {"url": "https://github.com/S3cur3Th1s/WinPwn.git", "install_cmd": "pip install.", "binary_name": "WinPwn.py"}
+    {"url": "https://github.com/EmpireProject/Empire.git", "install_cmd": "./setup/install.sh", "binary_name": "Empire"},
+    {"url": "https://github.com/PowerShellMafia/PowerSploit.git", "install_cmd": "powershell -Command \"Import-Module .\\PowerSploit.ps1\"", "binary_name": "PowerSploit.ps1"},
+    {"url": "https://github.com/ethicalhackingplayground/katana.git", "install_cmd": "pip install .", "binary_name": "katana"},
+    {"url": "https://github.com/thewhiteh4t/FinalRecon.git", "install_cmd": "pip install .", "binary_name": "FinalRecon"},
+    {"url": "https://github.com/bhavsec/reconspider.git", "install_cmd": "pip install .", "binary_name": "reconspider"},
+    {"url": "https://github.com/411Hall/JAWS.git", "install_cmd": "pip install .", "binary_name": "JAWS"},
+    {"url": "https://github.com/S3cur3Th1s/WinPwn.git", "install_cmd": "pip install .", "binary_name": "WinPwn"}
 ]
 
 # Function to clone repositories
@@ -51,13 +51,16 @@ def clone_repo(repo_url):
 def install_software(repo_path, install_cmd):
     print(f"\n** Installing {repo_path.split('/')[-1]} **")
     print(f"Running installation command: {install_cmd}")
-    subprocess.run(install_cmd, shell=True, cwd=repo_path)
+    subprocess.run(install_cmd, shell=True, cwd=repo_path, check=True)
 
 # Function to create symlinks
 def create_symlink(binary_path, binary_name):
     print(f"\n** Creating symlink for {binary_name} **")
-    print(f"Creating symlink at /usr/bin/{binary_name}")
-    os.symlink(binary_path, f"/usr/bin/{binary_name}")
+    symlink_path = f"/usr/local/bin/{binary_name}"
+    if os.path.exists(symlink_path):
+        os.remove(symlink_path)
+    print(f"Creating symlink at {symlink_path}")
+    os.symlink(binary_path, symlink_path)
 
 # Process each repository
 for repo in repos:
@@ -69,4 +72,4 @@ for repo in repos:
         print(f"\n** Deleting temporary files and directories for {repo_path.split('/')[-1]} **")
         shutil.rmtree(temp_dir)
     except Exception as e:
-        print(f"\n** Error: Failed to process {repo['url']}. Error
+        print(f"\n** Error: Failed to process {repo['url']}. Error: {str(e)} **")
