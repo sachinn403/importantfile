@@ -1,5 +1,6 @@
 import os
 import subprocess
+import tempfile
 import git
 
 # List of GitHub repositories
@@ -21,35 +22,52 @@ repos = [
 ]
 
 # Path to the bin directory
-bin_dir = "/usr/local/bin"
+bin_dir = "/usr/bin"
+
+# Function to run shell commands
+def run_command(command):
+    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode != 0:
+        print(f"Error running command: {command}")
+        print(result.stderr.decode())
+        raise Exception(f"Command failed: {command}")
+    return result.stdout.decode()
 
 # Function to clone repositories
 def clone_repo(repo_url):
     repo_name = repo_url.split("/")[-1]
-    dest_dir = os.path.join(bin_dir, repo_name)
-    if not os.path.exists(dest_dir):
-        print(f"Cloning {repo_name}...")
-        git.Repo.clone_from(repo_url, dest_dir)
+    temp_dir = tempfile.mkdtemp()
+    dest_dir = os.path.join(temp_dir, repo_name)
+    print(f"Cloning {repo_name} into {dest_dir}...")
+    git.Repo.clone_from(repo_url, dest_dir)
+    return dest_dir
+
+# Function to install software
+def install_software(repo_path):
+    print(f"Installing software from {repo_path}...")
+    run_command(f"cd {repo_path} && make install")  # Adjust the installation command as needed
+
+# Function to create symlinks
+def create_symlink(binary_path, binary_name):
+    symlink_path = os.path.join(bin_dir, binary_name)
+    if not os.path.exists(symlink_path):
+        os.symlink(binary_path, symlink_path)
+        print(f"Created symlink for {binary_path} -> {symlink_path}")
     else:
-        print(f"{repo_name} already exists. Skipping...")
+        print(f"Symlink for {binary_name} already exists. Skipping...")
 
-# Ensure the bin directory exists
-if not os.path.exists(bin_dir):
-    os.makedirs(bin_dir)
-
-# Clone each repository
+# Process each repository
 for repo in repos:
-    clone_repo(repo)
+    try:
+        repo_path = clone_repo(repo)
+        install_software(repo_path)
+        for root, dirs, files in os.walk(repo_path):
+            for file in files:
+                if file.endswith(".sh") or file.endswith(".py"):
+                    binary_path = os.path.join(root, file)
+                    os.chmod(binary_path, 0o755)
+                    create_symlink(binary_path, file)
+    except Exception as e:
+        print(f"Failed to process {repo}: {e}")
 
-# Make scripts executable and create symlinks in the bin directory
-for root, dirs, files in os.walk(bin_dir):
-    for file in files:
-        file_path = os.path.join(root, file)
-        if file.endswith(".sh") or file.endswith(".py"):
-            os.chmod(file_path, 0o755)
-            symlink_path = os.path.join(bin_dir, os.path.basename(file_path))
-            if not os.path.exists(symlink_path):
-                os.symlink(file_path, symlink_path)
-                print(f"Created symlink for {file_path} -> {symlink_path}")
-
-print("All repositories have been cloned and symlinks created.")
+print("All repositories have been cloned, installed, and symlinks created.")
